@@ -1,0 +1,12 @@
+{
+  "name": "ghosted",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Privacy-first job application tracker. Static site, no backend, data stays in your browser.",
+  "scripts": {
+    "test": "node --test \"test/*.test.js\"",
+    "check": "for f in js/*.js sw.js; do [ -f \"$f\" ] && node --check \"$f\"; done; echo syntax ok",
+    "serve": "http-server . -p 8080 -c-1"
+  }
+}

@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>Ghosted – a calm job application tracker</title>
+  <meta name="description" content="Track job applications, know when to follow up, and keep your momentum. Private by design: your data never leaves your device.">
+  <link rel="stylesheet" href="styles.css">
+  <script type="module" src="js/app.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="site-header">
+    <div class="wrap header-inner">
+      <p class="brand">Ghosted</p>
+      <p class="tagline">Keep track. Follow up. Keep going.</p>
+    </div>
+  </header>
+
+  <main id="main" class="wrap">
+    <noscript><p class="notice">Ghosted needs JavaScript to run. Nothing is sent anywhere; your data stays in this browser.</p></noscript>
+
+    <p id="storage-notice" class="notice" role="status" hidden></p>
+
+    <section aria-labelledby="add-title" class="panel">
+      <h2 id="add-title">Add an application</h2>
+      <form id="add-form" novalidate>
+        <div class="field">
+          <label for="company">Company</label>
+          <input id="company" name="company" type="text" maxlength="120" autocomplete="off" required aria-describedby="company-error">
+          <p class="error" id="company-error" hidden></p>
+        </div>
+        <div class="field">
+          <label for="role">Role</label>
+          <input id="role" name="role" type="text" maxlength="120" autocomplete="off" required aria-describedby="role-error">
+          <p class="error" id="role-error" hidden></p>
+        </div>
+        <div class="field">
+          <label for="dateApplied">Date applied</label>
+          <input id="dateApplied" name="dateApplied" type="date" required aria-describedby="dateApplied-error">
+          <p class="error" id="dateApplied-error" hidden></p>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">Add application</button>
+        </div>
+      </form>
+    </section>
+
+    <section aria-labelledby="list-title" class="panel">
+      <div class="list-head">
+        <h2 id="list-title">Your applications</h2>
+        <p id="list-count" class="muted"></p>
+      </div>
+      <div id="filters" class="filters" role="group" aria-label="Filter by status"></div>
+      <ul id="app-list" class="app-list"></ul>
+      <p id="empty" class="empty" hidden></p>
+    </section>
+
+    <p id="live" class="sr-only" role="status" aria-live="polite"></p>
+    <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <p>Your data stays in this browser. Nothing is uploaded, tracked or sold.</p>
+    </div>
+  </footer>
+</body>
+</html>
