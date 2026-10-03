@@ -62,6 +62,40 @@
     <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
   </main>
 
+
+  <dialog id="followup-dialog" aria-labelledby="fu-title">
+    <form method="dialog" id="fu-form" novalidate>
+      <div class="dialog-head">
+        <h2 id="fu-title">Follow up</h2>
+        <button type="button" class="btn btn-quiet" id="fu-close" aria-label="Close dialog">Close</button>
+      </div>
+      <p id="fu-sub" class="muted"></p>
+
+      <fieldset class="templates">
+        <legend>Template</legend>
+        <div id="fu-templates"></div>
+      </fieldset>
+
+      <div class="field">
+        <label for="fu-name">Your name (optional, saved on this device)</label>
+        <input id="fu-name" type="text" maxlength="80" autocomplete="name">
+      </div>
+
+      <div class="field">
+        <label for="fu-message">Message (you can edit it)</label>
+        <textarea id="fu-message" rows="11"></textarea>
+      </div>
+
+      <p id="fu-status" class="muted" role="status" aria-live="polite"></p>
+
+      <div class="dialog-actions">
+        <button type="button" class="btn" id="fu-copy">Copy message</button>
+        <button type="button" class="btn btn-primary" id="fu-sent">Mark as sent</button>
+      </div>
+      <p class="muted small">“Mark as sent” starts a fresh 7-day timer. Ghosted never sends anything for you.</p>
+    </form>
+  </dialog>
+
   <footer class="site-footer">
     <div class="wrap">
       <p>Your data stays in this browser. Nothing is uploaded, tracked or sold.</p>

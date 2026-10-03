@@ -7,7 +7,7 @@ export const CORRUPT_KEY = 'ghosted:v1:corrupt';
 export const SCHEMA_VERSION = 1;
 
 export function defaultState() {
-  return { version: SCHEMA_VERSION, apps: [], settings: { weeklyGoal: 5 } };
+  return { version: SCHEMA_VERSION, apps: [], settings: { weeklyGoal: 5, name: '' } };
 }
 
 const str = (v, max) => (typeof v === 'string' ? v.slice(0, max) : '');
@@ -47,8 +47,10 @@ export function sanitizeState(raw) {
       }
     }
   }
-  const goal = raw.settings && raw.settings.weeklyGoal;
+  const settings = raw.settings && typeof raw.settings === 'object' ? raw.settings : {};
+  const goal = settings.weeklyGoal;
   if (Number.isInteger(goal) && goal >= 1 && goal <= 50) state.settings.weeklyGoal = goal;
+  state.settings.name = str(settings.name, 80).trim();
   return state;
 }
 

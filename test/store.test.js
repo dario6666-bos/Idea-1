@@ -37,13 +37,14 @@ test('invalid records are dropped, bad fields repaired', () => {
       { id: '3', company: 'C', role: 'D', dateApplied: 'bad' },
       null,
     ],
-    settings: { weeklyGoal: 999 },
+    settings: { weeklyGoal: 999, name: 42 },
   });
   assert.equal(state.apps.length, 1);
   assert.equal(state.apps[0].status, 'Applied');
   assert.equal(state.apps[0].followUps, 0);
   assert.equal(state.apps[0].lastFollowUp, null);
   assert.equal(state.settings.weeklyGoal, 5);
+  assert.equal(state.settings.name, '');
 });
 
 test('storage that throws is handled', () => {
