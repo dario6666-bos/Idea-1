@@ -166,6 +166,51 @@ fieldset.templates legend { font-weight: 500; font-size: .9375rem; padding: 0; m
 .template-option .t-hint { grid-column: 2; color: var(--muted); font-size: .8125rem; }
 textarea { resize: vertical; line-height: 1.5; }
 
+
+/* Tabs */
+.tabs { display: flex; gap: .25rem; border-bottom: 1px solid var(--border); }
+.tab {
+  min-height: 2.75rem; padding: .5rem 1rem; font: inherit; font-weight: 500; cursor: pointer;
+  background: transparent; color: var(--muted); border: 0; border-bottom: 2px solid transparent; margin-bottom: -1px;
+}
+.tab[aria-selected="true"] { color: var(--accent); border-bottom-color: var(--accent); font-weight: 600; }
+.tab:hover { color: var(--text); }
+.tabpanel { display: grid; gap: 1.25rem; }
+.tabpanel[hidden] { display: none; }
+
+/* Thin progress bar */
+.bar { height: 6px; border-radius: 999px; background: var(--border); overflow: hidden; }
+.bar > span { display: block; height: 100%; width: 0; background: var(--accent); border-radius: 999px; }
+.panel .bar { margin-top: .75rem; }
+
+.strip { padding: .125rem 0 0; }
+.strip-text { font-size: .9375rem; color: var(--muted); margin-bottom: .5rem; }
+
+.big { font-family: var(--font-heading); font-size: 2rem; line-height: 1.2; color: var(--accent); margin-bottom: .25rem; }
+.goal-field { margin: 1rem 0 0; max-width: 14rem; }
+input[type="number"] { width: 100%; min-height: 2.75rem; padding: .5rem .75rem; font: inherit; color: var(--text); background: var(--bg); border: 1px solid var(--border); border-radius: 8px; }
+
+/* Badges */
+.badges { list-style: none; margin: .75rem 0 0; padding: 0; display: grid; gap: .5rem; }
+.badge { display: grid; grid-template-columns: 1.75rem 1fr; gap: .75rem; align-items: start; padding: .625rem .75rem; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); }
+.badge[data-earned="false"] { color: var(--muted); }
+.badge[data-earned="true"] { border-color: var(--accent); background: var(--accent-soft); }
+.badge-mark { width: 1.5rem; height: 1.5rem; border-radius: 50%; border: 1px solid var(--border); display: grid; place-items: center; font-size: .875rem; font-weight: 700; }
+.badge[data-earned="true"] .badge-mark { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+.badge-title { font-weight: 600; font-size: .9375rem; }
+.badge-how { font-size: .8125rem; color: var(--muted); }
+
+.points-list { list-style: none; margin: 0 0 .75rem; padding: 0; }
+.points-list li { display: flex; justify-content: space-between; gap: 1rem; padding: .5rem 0; border-bottom: 1px solid var(--border); font-size: .9375rem; }
+.points-list li:last-child { border-bottom: 0; }
+
+@media (min-width: 40rem) {
+  .badges { grid-template-columns: 1fr 1fr; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .bar > span { transition: width .4s ease; }
+}
+
 /* Toast */
 .toast {
   position: fixed; left: 50%; bottom: 1rem; transform: translateX(-50%);

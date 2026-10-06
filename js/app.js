@@ -4,6 +4,8 @@ import {
 import { load, save } from './store.js';
 import { FREE_TEMPLATES, fillTemplate, suggestedTemplateId } from './templates.js';
 import { toISODate, formatDate, describeAgo } from './dates.js';
+import { recordEvent, totalPoints, levelInfo, withGoalCheck } from './progress.js';
+import { renderProgress } from './progress-view.js';
 
 const $ = (id) => document.getElementById(id);
 
@@ -43,6 +45,22 @@ function persist() {
       'Try turning off private browsing, or allow site data for this page.';
   }
   return ok;
+}
+
+/** Records a progress event. Returns a short message such as " +10 points." (or ""). */
+function award(type, appId) {
+  const before = levelInfo(totalPoints(state.progress)).level;
+  const r = recordEvent(state.progress, type, appId, today());
+  state = { ...state, progress: r.progress };
+  const after = levelInfo(totalPoints(r.progress)).level;
+  let note = r.gained ? ` +${r.gained} points.` : '';
+  if (after > before) note += ` Level ${after} reached!`;
+  const checked = withGoalCheck(r.progress, today(), state.settings.weeklyGoal);
+  if (checked !== r.progress) {
+    state = { ...state, progress: checked };
+    note += ' Weekly goal reached!';
+  }
+  return note;
 }
 
 function showToast(message, actionLabel, onAction) {
@@ -132,6 +150,8 @@ function render() {
 
   $('app-list').replaceChildren(...visible.map((a) => renderCard(a, now)));
 
+  renderProgress(state, now);
+
   const total = state.apps.length;
   $('list-count').textContent = total ? `${total} in total` : '';
 
@@ -149,10 +169,12 @@ function render() {
 function changeStatus(id, status) {
   const now = today();
   state = { ...state, apps: state.apps.map((a) => (a.id === id ? withStatus(a, status, now) : a)) };
+  const eventType = { Interview: 'interview', Offer: 'offer', Rejected: 'rejection' }[status];
+  const note = eventType ? award(eventType, id) : '';
   persist();
   render();
   const app = state.apps.find((a) => a.id === id);
-  announce(`${app.company} moved to ${status}.`);
+  showToast(`${app.company} moved to ${status}.${note}`);
   const select = $(`status-${id}`);
   if (select) select.focus();
 }
@@ -265,11 +287,11 @@ function markSent() {
   saveName();
   const now = today();
   state = { ...state, apps: state.apps.map((a) => (a.id === app.id ? withFollowUpSent(a, now) : a)) };
+  const note = award('followup', app.id);
   persist();
   closeFollowUp();
   render();
-  announce(`Marked as sent to ${app.company}. We’ll remind you again in a week.`);
-  showToast(`Marked as sent to ${app.company}. Well done for reaching out.`);
+  showToast(`Marked as sent to ${app.company}. Well done for reaching out.${note}`);
   const btn = $(`fu-${app.id}`);
   if (btn) btn.focus();
 }
@@ -293,6 +315,51 @@ function setupFollowUp() {
     const r = fu.dialog.getBoundingClientRect();
     const outside = e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom;
     if (outside) closeFollowUp();
+  });
+}
+
+
+/* ---------- Tabs and weekly goal ---------- */
+
+const TAB_NAMES = ['apps', 'progress'];
+
+function selectTab(name, focus = false) {
+  for (const n of TAB_NAMES) {
+    const tab = $(`tab-${n}`);
+    const selected = n === name;
+    tab.setAttribute('aria-selected', String(selected));
+    tab.tabIndex = selected ? 0 : -1;
+    $(`panel-${n}`).hidden = !selected;
+    if (selected && focus) tab.focus();
+  }
+}
+
+function setupTabs() {
+  for (const n of TAB_NAMES) {
+    $(`tab-${n}`).addEventListener('click', () => selectTab(n));
+  }
+  $('tab-apps').parentElement.addEventListener('keydown', (e) => {
+    const i = TAB_NAMES.findIndex((n) => $(`tab-${n}`) === document.activeElement);
+    if (i < 0) return;
+    let next = null;
+    if (e.key === 'ArrowRight') next = (i + 1) % TAB_NAMES.length;
+    else if (e.key === 'ArrowLeft') next = (i - 1 + TAB_NAMES.length) % TAB_NAMES.length;
+    else if (e.key === 'Home') next = 0;
+    else if (e.key === 'End') next = TAB_NAMES.length - 1;
+    if (next === null) return;
+    e.preventDefault();
+    selectTab(TAB_NAMES[next], true);
+  });
+
+  const input = $('goal-input');
+  input.addEventListener('change', () => {
+    const n = Number(input.value);
+    if (Number.isInteger(n) && n >= 1 && n <= 50) {
+      state = { ...state, settings: { ...state.settings, weeklyGoal: n } };
+      persist();
+    }
+    input.value = String(state.settings.weeklyGoal);
+    render();
   });
 }
 
@@ -334,13 +401,14 @@ function setupForm() {
     }
     showErrors({});
     state = { ...state, apps: [...state.apps, result.app] };
+    const note = award('add', result.app.id);
     persist();
     form.reset();
     dateInput.value = today();
     dateInput.max = today();
     filter = 'All';
     render();
-    announce(`Added ${result.app.company}. Nicely done.`);
+    showToast(`Added ${result.app.company}. Nicely done.${note}`);
     $('company').focus();
   });
 }
@@ -358,6 +426,7 @@ if (!loaded.persisted) {
 }
 setupForm();
 setupFollowUp();
+setupTabs();
 render();
 // Refresh "due" badges if the tab stays open past midnight.
 document.addEventListener('visibilitychange', () => { if (!document.hidden) render(); });

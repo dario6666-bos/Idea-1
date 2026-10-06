@@ -24,39 +24,92 @@
 
     <p id="storage-notice" class="notice" role="status" hidden></p>
 
-    <section aria-labelledby="add-title" class="panel">
-      <h2 id="add-title">Add an application</h2>
-      <form id="add-form" novalidate>
-        <div class="field">
-          <label for="company">Company</label>
-          <input id="company" name="company" type="text" maxlength="120" autocomplete="off" required aria-describedby="company-error">
-          <p class="error" id="company-error" hidden></p>
-        </div>
-        <div class="field">
-          <label for="role">Role</label>
-          <input id="role" name="role" type="text" maxlength="120" autocomplete="off" required aria-describedby="role-error">
-          <p class="error" id="role-error" hidden></p>
-        </div>
-        <div class="field">
-          <label for="dateApplied">Date applied</label>
-          <input id="dateApplied" name="dateApplied" type="date" required aria-describedby="dateApplied-error">
-          <p class="error" id="dateApplied-error" hidden></p>
-        </div>
-        <div class="form-actions">
-          <button type="submit" class="btn btn-primary">Add application</button>
-        </div>
-      </form>
-    </section>
+    <div class="tabs" role="tablist" aria-label="Sections">
+      <button type="button" role="tab" id="tab-apps" class="tab" aria-controls="panel-apps" aria-selected="true">Applications</button>
+      <button type="button" role="tab" id="tab-progress" class="tab" aria-controls="panel-progress" aria-selected="false" tabindex="-1">Progress</button>
+    </div>
 
-    <section aria-labelledby="list-title" class="panel">
-      <div class="list-head">
-        <h2 id="list-title">Your applications</h2>
-        <p id="list-count" class="muted"></p>
-      </div>
-      <div id="filters" class="filters" role="group" aria-label="Filter by status"></div>
-      <ul id="app-list" class="app-list"></ul>
-      <p id="empty" class="empty" hidden></p>
-    </section>
+    <div id="panel-apps" role="tabpanel" aria-labelledby="tab-apps" class="tabpanel">
+      <section class="strip" aria-label="Progress summary">
+        <p id="strip-text" class="strip-text"></p>
+        <div class="bar" id="strip-bar" role="progressbar" aria-label="Weekly goal" aria-valuemin="0" aria-valuemax="100"><span></span></div>
+      </section>
+
+    <section aria-labelledby="add-title" class="panel">
+        <h2 id="add-title">Add an application</h2>
+        <form id="add-form" novalidate>
+          <div class="field">
+            <label for="company">Company</label>
+            <input id="company" name="company" type="text" maxlength="120" autocomplete="off" required aria-describedby="company-error">
+            <p class="error" id="company-error" hidden></p>
+          </div>
+          <div class="field">
+            <label for="role">Role</label>
+            <input id="role" name="role" type="text" maxlength="120" autocomplete="off" required aria-describedby="role-error">
+            <p class="error" id="role-error" hidden></p>
+          </div>
+          <div class="field">
+            <label for="dateApplied">Date applied</label>
+            <input id="dateApplied" name="dateApplied" type="date" required aria-describedby="dateApplied-error">
+            <p class="error" id="dateApplied-error" hidden></p>
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Add application</button>
+          </div>
+        </form>
+      </section>
+  
+      <section aria-labelledby="list-title" class="panel">
+        <div class="list-head">
+          <h2 id="list-title">Your applications</h2>
+          <p id="list-count" class="muted"></p>
+        </div>
+        <div id="filters" class="filters" role="group" aria-label="Filter by status"></div>
+        <ul id="app-list" class="app-list"></ul>
+        <p id="empty" class="empty" hidden></p>
+      </section>
+    </div>
+
+    <div id="panel-progress" role="tabpanel" aria-labelledby="tab-progress" class="tabpanel" hidden>
+      <section class="panel" aria-labelledby="lvl-title">
+        <h2 id="lvl-title">Level <span id="lvl-num"></span></h2>
+        <p class="muted" id="lvl-text"></p>
+        <div class="bar" id="lvl-bar" role="progressbar" aria-labelledby="lvl-title" aria-valuemin="0" aria-valuemax="100"><span></span></div>
+      </section>
+
+      <section class="panel" aria-labelledby="streak-title">
+        <h2 id="streak-title">Streak</h2>
+        <p class="big" id="streak-num"></p>
+        <p class="muted" id="streak-text"></p>
+      </section>
+
+      <section class="panel" aria-labelledby="goal-title">
+        <h2 id="goal-title">This week</h2>
+        <p class="muted" id="goal-text"></p>
+        <div class="bar" id="goal-bar" role="progressbar" aria-labelledby="goal-title" aria-valuemin="0" aria-valuemax="100"><span></span></div>
+        <div class="field goal-field">
+          <label for="goal-input">Weekly goal (number of actions)</label>
+          <input id="goal-input" type="number" inputmode="numeric" min="1" max="50" step="1">
+        </div>
+      </section>
+
+      <section class="panel" aria-labelledby="tip-title">
+        <h2 id="tip-title">Tip of the day</h2>
+        <p id="tip-text"></p>
+      </section>
+
+      <section class="panel" aria-labelledby="badges-title">
+        <h2 id="badges-title">Badges</h2>
+        <p class="muted" id="badges-summary"></p>
+        <ul class="badges" id="badge-list"></ul>
+      </section>
+
+      <section class="panel" aria-labelledby="how-title">
+        <h2 id="how-title">How points work</h2>
+        <ul class="points-list" id="points-list"></ul>
+        <p class="muted small">Levels come every 100 points. Points are never taken away, and a few quiet days won’t break your streak.</p>
+      </section>
+    </div>
 
     <p id="live" class="sr-only" role="status" aria-live="polite"></p>
     <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>

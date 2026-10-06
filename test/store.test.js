@@ -52,3 +52,24 @@ test('storage that throws is handled', () => {
   assert.equal(load(bad).persisted, false);
   assert.equal(save(bad, defaultState()), false);
 });
+
+test('progress events are validated and de-duplicated', () => {
+  const state = sanitizeState({
+    progress: {
+      events: [
+        { key: 'add:1', type: 'add', date: '2026-01-01' },
+        { key: 'add:1', type: 'add', date: '2026-01-02' },
+        { key: 'x', type: 'bonus', date: '2026-01-01' },
+        { key: 'add:2', type: 'add', date: 'bad' },
+        { type: 'add', date: '2026-01-01' },
+        { key: 'offer:1', type: 'offer', date: '2026-01-03', points: 99999 },
+      ],
+    },
+  });
+  assert.deepEqual(state.progress.events.map((e) => e.key), ['add:1', 'offer:1']);
+  assert.deepEqual(Object.keys(state.progress.events[1]).sort(), ['date', 'key', 'type']);
+});
+
+test('missing progress becomes empty progress', () => {
+  assert.deepEqual(sanitizeState({ apps: [] }).progress, { events: [], goalReached: false });
+});
