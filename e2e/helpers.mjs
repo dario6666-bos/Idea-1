@@ -5,7 +5,9 @@ import path from 'node:path';
 const require = createRequire(import.meta.url);
 export const { chromium } = require('playwright');
 
-const root = path.resolve(import.meta.dirname, '..');
+const root = process.env.SITE_ROOT ? path.resolve(process.env.SITE_ROOT) : path.resolve(import.meta.dirname, '..');
+// Set BASE_PATH=/Idea-1/ to mimic GitHub Pages project sites.
+const base = process.env.BASE_PATH || '/';
 const types = {
   '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.json': 'application/json',
   '.svg': 'image/svg+xml', '.webmanifest': 'application/manifest+json', '.png': 'image/png', '.woff2': 'font/woff2',
@@ -13,11 +15,14 @@ const types = {
 
 export function startServer() {
   const server = http.createServer((req, res) => {
-    const p = path.join(root, req.url === '/' ? 'index.html' : req.url.split('?')[0]);
+    const rel = decodeURIComponent(req.url.split('?')[0]);
+    if (!rel.startsWith(base)) { res.writeHead(404).end(); return; }
+    const sub = rel.slice(base.length);
+    const p = path.join(root, sub === '' ? 'index.html' : sub);
     if (!p.startsWith(root) || !fs.existsSync(p) || fs.statSync(p).isDirectory()) { res.writeHead(404).end(); return; }
     res.writeHead(200, { 'content-type': types[path.extname(p)] || 'application/octet-stream' }).end(fs.readFileSync(p));
   }).listen(0);
-  return { server, url: `http://localhost:${server.address().port}/` };
+  return { server, url: `http://localhost:${server.address().port}${base}` };
 }
 
 export function launch() {

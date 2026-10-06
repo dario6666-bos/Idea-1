@@ -1,40 +1,49 @@
 # Next steps
 
-## Done
-- **Step 1 – core tracker** (add, status, follow-up due badge, remove with undo, filters, localStorage with
-  recovery from corrupt data).
-  - `npm test` → 20 unit tests pass (dates, rules, storage).
-  - `e2e/step1.mjs` → Playwright/Chromium smoke test at 375px: all checks pass.
+## Done (all steps of the approved plan, except Pro)
+1. **Core tracker**: add, statuses, "Follow-up due" at 7+ days, filters, remove with Undo, localStorage with
+   recovery from corrupt data.
+2. **Follow-up dialog**: 3 templates, editable message, optional name, Copy, "Mark as sent".
+3. **Progress**: points, levels, forgiving streak, weekly goal bar, tip of the day, 12 badges, Progress tab.
+4. **Design**: Inter + Source Serif 4 self-hosted (OFL), warm off-white + deep teal, light/dark, reduced motion.
+5. **PWA + landing**: manifest, offline service worker, one-page landing section, share meta tags, original icons
+   and share image.
+6. **Deploy**: `tools/build.mjs`, GitHub Pages workflow, README with GitHub Pages and Cloudflare Pages steps.
 
-- **Step 2 – follow-up dialog**: 3 free templates (friendly, short, thank-you), editable message, optional name
-  (saved on device), Copy, "Mark as sent" (resets the 7-day timer). Interview cards suggest the thank-you template.
-  - `npm test` → 26 unit tests pass. `e2e/step2.mjs` → 30 browser checks pass (keyboard, clipboard, persistence).
-- **Step 3 – progress**: points (+10/+25/+50/+200/+5), levels every 100, streak, weekly goal bar, tip of the day
-  (after 3 actions), Progress tab, 12 badges. Logic is pure and tested (`js/progress.js`).
-  - `npm test` → 46 pass. `e2e/step3.mjs` → 49 browser checks pass.
+## Test results (run in this session)
+- `npm test`: 51 unit tests pass.
+- Browser tests (Playwright + Chromium, 375px phone viewport): ~125 checks pass, both on the source tree and on the
+  built `dist/` served under a `/Idea-1/` sub-path (includes offline reload, add while offline, cache update).
+- Lighthouse (mobile, built site): Performance 99, Accessibility 100, Best Practices 100, SEO 100.
+- axe-core: 0 violations in light and dark, on the empty page, with cards, with the dialog open, and on the Progress tab,
+  apart from "page has no h1" before the landing was added (fixed, h1 now present).
 
-## Next
-- Step 4: self-host Source Serif 4 + Inter, design polish, Lighthouse accessibility run.
-- Step 5: PWA (manifest + service worker), landing section, share meta tags, icons.
-- Step 6: GitHub Pages workflow + README.
-- Pro / Cloudflare Worker license check: **waiting for owner approval**, not started.
+## You need to do
+1. **Merge the branch into `main`** (the remote only has `claude/working-rules-aecs1o`). Say the word and I can open a PR.
+2. Enable GitHub Pages: Settings, Pages, Source = **GitHub Actions**. Then check the Actions tab.
+3. Check the share address in `index.html` (`https://dario6666-bos.github.io/Idea-1/`) matches where you deploy.
+4. Decide whether to add a LICENSE file (I did not choose one for you).
 
-## Decisions made (change if you disagree)
-- "Follow-up due" counts from the latest of: date applied, last follow-up sent, or the day the card moved to
-  Interview. Only Applied and Interview cards can be due.
-- Weekly goal defaults to 5 actions. Weeks run Monday–Sunday.
+## Waiting for your approval (not started)
+- **Pro ($4-5, Gumroad license key)**: CSV export/import, extra themes, 20+ templates. Proposed check: one tiny
+  Cloudflare Worker that calls Gumroad's license verify API (free tier). Needs: a Gumroad product with license keys,
+  and a free Cloudflare account. Known limit: a determined user can fake the flag in localStorage; acceptable for a
+  $4-5 product without a backend. Reply "go Pro" to start.
 
-## Blocked
-- `git push` returns 403: the Claude GitHub App is not installed on dario6666-bos/Idea-1 (or needs relinking).
-  Commits exist locally only. Owner must fix access at https://claude.ai/connect-github.
+## Not tested (be aware)
+- The GitHub Actions workflow has never run (YAML parses, the same commands pass locally).
+- Real phones: only a 375px Chromium viewport. Not tried on iOS Safari (dialog, install to home screen, clipboard).
+- Screen readers (VoiceOver, TalkBack, NVDA): only automated checks (axe, Lighthouse) and keyboard checks by script.
+- The Copy fallback for browsers that deny clipboard access.
+- Cloudflare Pages deploy instructions (written from documentation, not run).
+- Browsers other than Chromium (Firefox, Safari).
 
-## Rules I chose for progress (change if you disagree)
-- Streak counts days with at least one action. Up to 2 days without an action are fine (actions 3 days apart
-  continue the streak). After that it restarts with a gentle "fresh start" message; best streak is kept.
-- Interview / offer / rejection points are awarded once per application (no farming by toggling status).
-  Follow-up points: once per application per day. Points are never removed, even if you delete a card.
-- Weekly goal counts every action, Monday to Sunday. The "Weekly goal met" badge is permanent.
+## Ideas for later
+- Optional notes field on cards, edit an application, simple backup/restore (free, no Pro needed?) , reminders
+  via the browser's notification permission, Latin-extended font subset for non-English names.
 
-## Not tested yet
-- Real phone devices (only a 375px Chromium viewport so far).
-- Screen readers (only labels/roles/focus order checked by script).
+## Rules I chose (change if you disagree)
+- Follow-up clock: latest of date applied, last follow-up sent, or the day it moved to Interview.
+- Streak: up to 2 quiet days allowed; best streak kept; "fresh start" copy instead of "lost".
+- Points: one-time per application for interview/offer/rejection; follow-up once per application per day.
+- Weekly goal default 5, Monday to Sunday; the weekly goal badge is permanent.

@@ -1,31 +1,14 @@
 // End-to-end smoke test. Needs Playwright (global install) and Chromium.
 // Run: NODE_PATH=$(npm root -g) node e2e/step1.mjs
-import { createRequire } from 'node:module';
-import http from 'node:http';
-import fs from 'node:fs';
-import path from 'node:path';
-const require = createRequire(import.meta.url);
-const { chromium } = require('playwright');
+import { startServer, launch, iso, makeChecker, trackErrors } from './helpers.mjs';
 
-const root = path.resolve(import.meta.dirname, '..');
-const types = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.json': 'application/json', '.svg': 'image/svg+xml' };
-const server = http.createServer((req, res) => {
-  const p = path.join(root, req.url === '/' ? 'index.html' : req.url.split('?')[0]);
-  if (!p.startsWith(root) || !fs.existsSync(p)) { res.writeHead(404).end(); return; }
-  res.writeHead(200, { 'content-type': types[path.extname(p)] || 'application/octet-stream' }).end(fs.readFileSync(p));
-}).listen(0);
-const url = `http://localhost:${server.address().port}/`;
+const { server, url } = startServer();
+const { check, done } = makeChecker();
 
-let failures = 0;
-const check = (name, ok, extra = '') => { console.log(`${ok ? 'PASS' : 'FAIL'}  ${name} ${extra}`); if (!ok) failures++; };
-
-const browser = await chromium.launch({ executablePath: process.env.CHROMIUM_PATH || undefined });
+const browser = await launch();
 const ctx = await browser.newContext({ viewport: { width: 375, height: 800 } });
 const page = await ctx.newPage();
-const errors = [];
-page.on('pageerror', (e) => errors.push(e.message));
-page.on('response', (r) => { if (r.status() >= 400 && !r.url().endsWith('/favicon.ico')) errors.push(`${r.status()} ${r.url()}`); });
-page.on('console', (m) => { if (m.type() === 'error' && !/status of 404/.test(m.text())) errors.push(m.text()); });
+const errors = trackErrors(page);
 
 await page.goto(url);
 check('empty state shown', await page.locator('#empty').isVisible());
@@ -36,7 +19,6 @@ check('validation error shown for company', await page.locator('#company-error')
 check('focus moves to first invalid field', await page.evaluate(() => document.activeElement.id) === 'company');
 
 // Add two applications: one fresh, one 10 days old
-const iso = (offset) => { const d = new Date(); d.setDate(d.getDate() + offset); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
 async function add(company, role, date) {
   await page.fill('#company', company);
   await page.fill('#role', role);
@@ -100,5 +82,4 @@ await page.screenshot({ path: process.env.SHOT || '/tmp/step1-dark.png', fullPag
 
 await browser.close();
 server.close();
-console.log(failures ? `\n${failures} FAILED` : '\nAll passed');
-process.exit(failures ? 1 : 0);
+process.exit(done());
