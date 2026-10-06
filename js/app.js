@@ -26,6 +26,7 @@ const loaded = load(window.localStorage);
 let state = loaded.state;
 let filter = 'All';
 let toastTimer = null;
+let introPinned = false; // true when the user chose to show the intro again
 
 const today = () => toISODate();
 
@@ -151,6 +152,7 @@ function render() {
   $('app-list').replaceChildren(...visible.map((a) => renderCard(a, now)));
 
   renderProgress(state, now);
+  renderIntro();
 
   const total = state.apps.length;
   $('list-count').textContent = total ? `${total} in total` : '';
@@ -162,6 +164,31 @@ function render() {
       ? `Nothing marked ${filter} right now.`
       : 'Nothing here yet. Add your first application whenever you’re ready.';
   }
+}
+
+/* ---------- Intro ---------- */
+
+// The intro is for first-time visitors. Once there is data it steps aside.
+function renderIntro() {
+  const show = state.apps.length === 0 || introPinned;
+  $('landing').hidden = !show;
+  const btn = $('toggle-intro');
+  btn.hidden = state.apps.length === 0; // with no data the intro always shows
+  btn.textContent = show ? 'Hide intro' : 'What is Ghosted?';
+  btn.setAttribute('aria-expanded', String(show));
+}
+
+function setupIntro() {
+  $('toggle-intro').addEventListener('click', () => {
+    const showing = !$('landing').hidden;
+    introPinned = !showing;
+    renderIntro();
+  });
+  $('hero-cta').addEventListener('click', (e) => {
+    e.preventDefault();
+    $('add-title').scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+    $('company').focus({ preventScroll: true });
+  });
 }
 
 /* ---------- Actions ---------- */
@@ -427,6 +454,14 @@ if (!loaded.persisted) {
 setupForm();
 setupFollowUp();
 setupTabs();
+setupIntro();
 render();
 // Refresh "due" badges if the tab stays open past midnight.
 document.addEventListener('visibilitychange', () => { if (!document.hidden) render(); });
+
+// Offline support. Needs https or localhost; fails quietly elsewhere.
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(() => { /* app works without it */ });
+  });
+}
