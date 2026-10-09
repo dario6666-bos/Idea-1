@@ -1,3 +1,21 @@
+/* Self-hosted variable fonts (SIL Open Font License, see fonts/). Latin subset. */
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("fonts/inter-latin-wght-normal.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Source Serif 4";
+  font-style: normal;
+  font-weight: 200 900;
+  font-display: swap;
+  src: url("fonts/source-serif-4-latin-wght-normal.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
 /* Ghosted – calm, professional. Warm off-white + deep teal, hairline borders. */
 :root {
   --bg: #faf7f2;
@@ -140,6 +158,93 @@ input[aria-invalid="true"] { border-color: var(--danger); }
 .status-field select { width: auto; min-width: 8.5rem; }
 
 .empty { color: var(--muted); padding: 1rem 0; text-align: center; }
+
+
+/* Dialog */
+dialog {
+  width: min(100% - 1.5rem, 36rem); max-height: calc(100dvh - 1.5rem); overflow: auto;
+  padding: 1.25rem; border: 1px solid var(--border); border-radius: var(--radius);
+  background: var(--surface); color: var(--text);
+}
+dialog::backdrop { background: rgba(10, 20, 20, .55); }
+.dialog-head { display: flex; justify-content: space-between; align-items: center; gap: 1rem; margin-bottom: .25rem; }
+.dialog-actions { display: flex; flex-wrap: wrap; gap: .5rem; margin: .5rem 0 .75rem; }
+.small { font-size: .8125rem; }
+fieldset.templates { border: 0; padding: 0; margin: 1rem 0 .875rem; }
+fieldset.templates legend { font-weight: 500; font-size: .9375rem; padding: 0; margin-bottom: .375rem; }
+.template-option {
+  display: grid; grid-template-columns: auto 1fr; gap: .125rem .625rem; align-items: start;
+  padding: .625rem .75rem; margin-bottom: .5rem; cursor: pointer;
+  border: 1px solid var(--border); border-radius: 8px; background: var(--bg);
+}
+.template-option:has(input:checked) { border-color: var(--accent); background: var(--accent-soft); }
+.template-option:has(input:focus-visible) { outline: 3px solid var(--focus); outline-offset: 2px; }
+.template-option input { margin-top: .25rem; accent-color: var(--accent); }
+.template-option .t-label { font-weight: 600; font-size: .9375rem; }
+.template-option .t-hint { grid-column: 2; color: var(--muted); font-size: .8125rem; }
+textarea { resize: vertical; line-height: 1.5; }
+
+
+/* Tabs */
+.tabs { display: flex; gap: .25rem; border-bottom: 1px solid var(--border); }
+.tab {
+  min-height: 2.75rem; padding: .5rem 1rem; font: inherit; font-weight: 500; cursor: pointer;
+  background: transparent; color: var(--muted); border: 0; border-bottom: 2px solid transparent; margin-bottom: -1px;
+}
+.tab[aria-selected="true"] { color: var(--accent); border-bottom-color: var(--accent); font-weight: 600; }
+.tab:hover { color: var(--text); }
+.tabpanel { display: grid; gap: 1.25rem; }
+.tabpanel[hidden] { display: none; }
+
+/* Thin progress bar */
+.bar { height: 6px; border-radius: 999px; background: var(--border); overflow: hidden; }
+.bar > span { display: block; height: 100%; width: 0; background: var(--accent); border-radius: 999px; }
+.panel .bar { margin-top: .75rem; }
+
+.strip { padding: .125rem 0 0; min-height: 2.5rem; }
+.strip-text { font-size: .9375rem; color: var(--muted); margin-bottom: .5rem; min-height: 1.45rem; }
+
+.big { font-family: var(--font-heading); font-size: 2rem; line-height: 1.2; color: var(--accent); margin-bottom: .25rem; }
+.goal-field { margin: 1rem 0 0; max-width: 14rem; }
+input[type="number"] { width: 100%; min-height: 2.75rem; padding: .5rem .75rem; font: inherit; color: var(--text); background: var(--bg); border: 1px solid var(--border); border-radius: 8px; }
+
+/* Badges */
+.badges { list-style: none; margin: .75rem 0 0; padding: 0; display: grid; gap: .5rem; }
+.badge { display: grid; grid-template-columns: 1.75rem 1fr; gap: .75rem; align-items: start; padding: .625rem .75rem; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); }
+.badge[data-earned="false"] { color: var(--muted); }
+.badge[data-earned="true"] { border-color: var(--accent); background: var(--accent-soft); }
+.badge-mark { width: 1.5rem; height: 1.5rem; border-radius: 50%; border: 1px solid var(--border); display: grid; place-items: center; font-size: .875rem; font-weight: 700; }
+.badge[data-earned="true"] .badge-mark { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+.badge-title { font-weight: 600; font-size: .9375rem; }
+.badge-how { font-size: .8125rem; color: var(--muted); }
+
+.points-list { list-style: none; margin: 0 0 .75rem; padding: 0; }
+.points-list li { display: flex; justify-content: space-between; gap: 1rem; padding: .5rem 0; border-bottom: 1px solid var(--border); font-size: .9375rem; }
+.points-list li:last-child { border-bottom: 0; }
+
+@media (min-width: 40rem) {
+  .badges { grid-template-columns: 1fr 1fr; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .bar > span { transition: width .4s ease; }
+}
+
+
+/* Landing */
+.hero { padding: .5rem 0 .25rem; }
+.hero[hidden] { display: none; }
+.hero-title { font-size: clamp(1.625rem, 6vw, 2.25rem); line-height: 1.15; margin-bottom: .75rem; }
+.hero-lead { color: var(--muted); font-size: 1.0625rem; margin-bottom: 1.25rem; }
+.features { list-style: none; margin: 0 0 1.25rem; padding: 0; display: grid; gap: .75rem; }
+.features li { border-left: 2px solid var(--accent); padding: .125rem 0 .125rem .875rem; }
+.features h3 { margin-bottom: .25rem; }
+.features p { color: var(--muted); font-size: .9375rem; }
+a.btn { text-decoration: none; }
+.footer-links { margin-top: .5rem; display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; }
+.link-btn { font: inherit; color: var(--accent); background: none; border: 0; padding: .25rem 0; cursor: pointer; text-decoration: underline; min-height: 2rem; }
+@media (min-width: 40rem) {
+  .features { grid-template-columns: repeat(3, 1fr); gap: 1.25rem; }
+}
 
 /* Toast */
 .toast {

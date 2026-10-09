@@ -4,8 +4,33 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="light dark">
-  <title>Ghosted – a calm job application tracker</title>
-  <meta name="description" content="Track job applications, know when to follow up, and keep your momentum. Private by design: your data never leaves your device.">
+  <title>Ghosted: a calm, private job application tracker</title>
+  <meta name="description" content="Track job applications, know when to follow up, and keep your momentum. No account, no tracking: your data stays on your device.">
+  <meta name="theme-color" content="#faf7f2" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#111716" media="(prefers-color-scheme: dark)">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+
+  <!-- Sharing. Replace the site address below if you deploy somewhere other than GitHub Pages. -->
+  <link rel="canonical" href="https://dario6666-bos.github.io/Idea-1/">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Ghosted">
+  <meta property="og:title" content="Ghosted: a calm, private job application tracker">
+  <meta property="og:description" content="Know when to follow up, keep your momentum, and keep your data on your device.">
+  <meta property="og:url" content="https://dario6666-bos.github.io/Idea-1/">
+  <meta property="og:image" content="https://dario6666-bos.github.io/Idea-1/icons/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Ghosted, a calm and private job application tracker.">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Ghosted: a calm, private job application tracker">
+  <meta name="twitter:description" content="Know when to follow up, keep your momentum, and keep your data on your device.">
+  <meta name="twitter:image" content="https://dario6666-bos.github.io/Idea-1/icons/og-image.png">
+  <meta name="twitter:image:alt" content="Ghosted, a calm and private job application tracker.">
+
+  <link rel="preload" href="fonts/inter-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fonts/source-serif-4-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="styles.css">
   <script type="module" src="js/app.js"></script>
 </head>
@@ -14,7 +39,7 @@
 
   <header class="site-header">
     <div class="wrap header-inner">
-      <p class="brand">Ghosted</p>
+      <h1 class="brand">Ghosted</h1>
       <p class="tagline">Keep track. Follow up. Keep going.</p>
     </div>
   </header>
@@ -22,49 +47,160 @@
   <main id="main" class="wrap">
     <noscript><p class="notice">Ghosted needs JavaScript to run. Nothing is sent anywhere; your data stays in this browser.</p></noscript>
 
+    <section id="landing" class="hero" aria-labelledby="hero-title">
+      <h2 id="hero-title" class="hero-title">Stop wondering who replied. Know who to nudge.</h2>
+      <p class="hero-lead">A job search means dozens of applications, and many never get an answer. It’s easy to lose track of who you contacted, when, and whether it’s a good time to follow up. Ghosted keeps all of it in one calm place.</p>
+      <ul class="features">
+        <li>
+          <h3>Know when to follow up</h3>
+          <p>After a week of quiet, a card shows “Follow-up due”. Pick a ready-made message, copy it and send it from your own email.</p>
+        </li>
+        <li>
+          <h3>Keep your momentum</h3>
+          <p>Earn points, build a streak that forgives quiet days, and aim for a weekly goal. Encouragement only, never pressure.</p>
+        </li>
+        <li>
+          <h3>Private by design</h3>
+          <p>No account, no tracking, no server. Your applications live in this browser, and the app works offline.</p>
+        </li>
+      </ul>
+      <p><a class="btn btn-primary" href="#add-title" id="hero-cta">Add your first application</a></p>
+    </section>
+
     <p id="storage-notice" class="notice" role="status" hidden></p>
 
-    <section aria-labelledby="add-title" class="panel">
-      <h2 id="add-title">Add an application</h2>
-      <form id="add-form" novalidate>
-        <div class="field">
-          <label for="company">Company</label>
-          <input id="company" name="company" type="text" maxlength="120" autocomplete="off" required aria-describedby="company-error">
-          <p class="error" id="company-error" hidden></p>
-        </div>
-        <div class="field">
-          <label for="role">Role</label>
-          <input id="role" name="role" type="text" maxlength="120" autocomplete="off" required aria-describedby="role-error">
-          <p class="error" id="role-error" hidden></p>
-        </div>
-        <div class="field">
-          <label for="dateApplied">Date applied</label>
-          <input id="dateApplied" name="dateApplied" type="date" required aria-describedby="dateApplied-error">
-          <p class="error" id="dateApplied-error" hidden></p>
-        </div>
-        <div class="form-actions">
-          <button type="submit" class="btn btn-primary">Add application</button>
-        </div>
-      </form>
-    </section>
+    <div class="tabs" role="tablist" aria-label="Sections">
+      <button type="button" role="tab" id="tab-apps" class="tab" aria-controls="panel-apps" aria-selected="true">Applications</button>
+      <button type="button" role="tab" id="tab-progress" class="tab" aria-controls="panel-progress" aria-selected="false" tabindex="-1">Progress</button>
+    </div>
 
-    <section aria-labelledby="list-title" class="panel">
-      <div class="list-head">
-        <h2 id="list-title">Your applications</h2>
-        <p id="list-count" class="muted"></p>
-      </div>
-      <div id="filters" class="filters" role="group" aria-label="Filter by status"></div>
-      <ul id="app-list" class="app-list"></ul>
-      <p id="empty" class="empty" hidden></p>
-    </section>
+    <div id="panel-apps" role="tabpanel" aria-labelledby="tab-apps" class="tabpanel">
+      <section class="strip" aria-label="Progress summary">
+        <p id="strip-text" class="strip-text">Level 1 · 0 points · 0 of 5 this week</p>
+        <div class="bar" id="strip-bar" role="progressbar" aria-label="Weekly goal" aria-valuemin="0" aria-valuemax="100"><span></span></div>
+      </section>
+
+    <section aria-labelledby="add-title" class="panel">
+        <h2 id="add-title">Add an application</h2>
+        <form id="add-form" novalidate>
+          <div class="field">
+            <label for="company">Company</label>
+            <input id="company" name="company" type="text" maxlength="120" autocomplete="off" required aria-describedby="company-error">
+            <p class="error" id="company-error" hidden></p>
+          </div>
+          <div class="field">
+            <label for="role">Role</label>
+            <input id="role" name="role" type="text" maxlength="120" autocomplete="off" required aria-describedby="role-error">
+            <p class="error" id="role-error" hidden></p>
+          </div>
+          <div class="field">
+            <label for="dateApplied">Date applied</label>
+            <input id="dateApplied" name="dateApplied" type="date" required aria-describedby="dateApplied-error">
+            <p class="error" id="dateApplied-error" hidden></p>
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Add application</button>
+          </div>
+        </form>
+      </section>
+  
+      <section aria-labelledby="list-title" class="panel">
+        <div class="list-head">
+          <h2 id="list-title">Your applications</h2>
+          <p id="list-count" class="muted"></p>
+        </div>
+        <div id="filters" class="filters" role="group" aria-label="Filter by status"></div>
+        <ul id="app-list" class="app-list"></ul>
+        <p id="empty" class="empty" hidden></p>
+      </section>
+    </div>
+
+    <div id="panel-progress" role="tabpanel" aria-labelledby="tab-progress" class="tabpanel" hidden>
+      <section class="panel" aria-labelledby="lvl-title">
+        <h2 id="lvl-title">Level <span id="lvl-num"></span></h2>
+        <p class="muted" id="lvl-text"></p>
+        <div class="bar" id="lvl-bar" role="progressbar" aria-labelledby="lvl-title" aria-valuemin="0" aria-valuemax="100"><span></span></div>
+      </section>
+
+      <section class="panel" aria-labelledby="streak-title">
+        <h2 id="streak-title">Streak</h2>
+        <p class="big" id="streak-num"></p>
+        <p class="muted" id="streak-text"></p>
+      </section>
+
+      <section class="panel" aria-labelledby="goal-title">
+        <h2 id="goal-title">This week</h2>
+        <p class="muted" id="goal-text"></p>
+        <div class="bar" id="goal-bar" role="progressbar" aria-labelledby="goal-title" aria-valuemin="0" aria-valuemax="100"><span></span></div>
+        <div class="field goal-field">
+          <label for="goal-input">Weekly goal (number of actions)</label>
+          <input id="goal-input" type="number" inputmode="numeric" min="1" max="50" step="1">
+        </div>
+      </section>
+
+      <section class="panel" aria-labelledby="tip-title">
+        <h2 id="tip-title">Tip of the day</h2>
+        <p id="tip-text"></p>
+      </section>
+
+      <section class="panel" aria-labelledby="badges-title">
+        <h2 id="badges-title">Badges</h2>
+        <p class="muted" id="badges-summary"></p>
+        <ul class="badges" id="badge-list"></ul>
+      </section>
+
+      <section class="panel" aria-labelledby="how-title">
+        <h2 id="how-title">How points work</h2>
+        <ul class="points-list" id="points-list"></ul>
+        <p class="muted small">Levels come every 100 points. Points are never taken away, and a few quiet days won’t break your streak.</p>
+      </section>
+    </div>
 
     <p id="live" class="sr-only" role="status" aria-live="polite"></p>
     <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
   </main>
 
+
+  <dialog id="followup-dialog" aria-labelledby="fu-title">
+    <form method="dialog" id="fu-form" novalidate>
+      <div class="dialog-head">
+        <h2 id="fu-title">Follow up</h2>
+        <button type="button" class="btn btn-quiet" id="fu-close" aria-label="Close dialog">Close</button>
+      </div>
+      <p id="fu-sub" class="muted"></p>
+
+      <fieldset class="templates">
+        <legend>Template</legend>
+        <div id="fu-templates"></div>
+      </fieldset>
+
+      <div class="field">
+        <label for="fu-name">Your name (optional, saved on this device)</label>
+        <input id="fu-name" type="text" maxlength="80" autocomplete="name">
+      </div>
+
+      <div class="field">
+        <label for="fu-message">Message (you can edit it)</label>
+        <textarea id="fu-message" rows="11"></textarea>
+      </div>
+
+      <p id="fu-status" class="muted" role="status" aria-live="polite"></p>
+
+      <div class="dialog-actions">
+        <button type="button" class="btn" id="fu-copy">Copy message</button>
+        <button type="button" class="btn btn-primary" id="fu-sent">Mark as sent</button>
+      </div>
+      <p class="muted small">“Mark as sent” starts a fresh 7-day timer. Ghosted never sends anything for you.</p>
+    </form>
+  </dialog>
+
   <footer class="site-footer">
     <div class="wrap">
       <p>Your data stays in this browser. Nothing is uploaded, tracked or sold.</p>
+      <p class="footer-links">
+        <button type="button" class="link-btn" id="toggle-intro" aria-controls="landing" aria-expanded="true">Hide intro</button>
+        <span>Fonts: Inter and Source Serif 4 (SIL Open Font License)</span>
+      </p>
     </div>
   </footer>
 </body>

@@ -1,13 +1,14 @@
 // localStorage persistence. Storage is injectable so it can be tested in Node.
 import { STATUSES } from './core.js';
 import { isValidISO } from './dates.js';
+import { POINTS, MAX_EVENTS, emptyProgress } from './progress.js';
 
 export const KEY = 'ghosted:v1';
 export const CORRUPT_KEY = 'ghosted:v1:corrupt';
 export const SCHEMA_VERSION = 1;
 
 export function defaultState() {
-  return { version: SCHEMA_VERSION, apps: [], settings: { weeklyGoal: 5 } };
+  return { version: SCHEMA_VERSION, apps: [], progress: emptyProgress(), settings: { weeklyGoal: 5, name: '' } };
 }
 
 const str = (v, max) => (typeof v === 'string' ? v.slice(0, max) : '');
@@ -47,8 +48,21 @@ export function sanitizeState(raw) {
       }
     }
   }
-  const goal = raw.settings && raw.settings.weeklyGoal;
+  if (raw.progress && Array.isArray(raw.progress.events)) {
+    const seen = new Set();
+    for (const e of raw.progress.events) {
+      if (!e || typeof e.key !== 'string' || e.key.length > 100 || seen.has(e.key)) continue;
+      if (!(e.type in POINTS) || !isValidISO(e.date)) continue;
+      seen.add(e.key);
+      state.progress.events.push({ key: e.key, type: e.type, date: e.date });
+    }
+    state.progress.events = state.progress.events.slice(-MAX_EVENTS);
+    state.progress.goalReached = raw.progress.goalReached === true;
+  }
+  const settings = raw.settings && typeof raw.settings === 'object' ? raw.settings : {};
+  const goal = settings.weeklyGoal;
   if (Number.isInteger(goal) && goal >= 1 && goal <= 50) state.settings.weeklyGoal = goal;
+  state.settings.name = str(settings.name, 80).trim();
   return state;
 }
 
